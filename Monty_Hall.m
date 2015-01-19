@@ -1,52 +1,47 @@
+%%%% Monty Hall problem simulator
+
 clear all
 close all
 clc
 
-% Inicializas el contador de aciertos
-n = 0;
-m = 0;
+% Number of simulations
+I = 10000;
 
-% Loop cambiando de eleccion
-for L = 1:10000
-    % Colocas el premio (R) y eliges puerta (r)
-    r = randi([0 2]);
-    R = randi([0 2]);
-
-    % Abres una puerta que no tiene premio (a)
-    if r == R
-        a = mod(r+1,3);
-    elseif r == mod(R+1,3)
-        a = mod(r+1,3);
-    elseif r == mod(R+2,3)
-        a = mod(r-1,3);
-    end
+% Keeping the choice
     
-    % Cambias de eleccion siempre
-    if r == mod(a-1,3)
-        r = mod(a+1,3);
-    elseif r == mod(a+1,3)
-        r = mod(a-1,3);
-    end
+    % 'r' assigns the elections and 'R' assigns the prizes
+    r = randi([0 2], I, 1);
+    R = randi([0 2], I, 1);
+    o = zeros(I, 1);
+
+    % Evaluates how many times the entries match i.e. the number of hits
+    m = length(find(r == R));
+
     
-    % Cuentas los aciertos
-    if r == R
-        n = n+1;
-    end
-end
+% Changing the choice
 
-% Loop manteniendo la eleccion
-for L = 1:10000
-    % Colocas el premio (S) y eliges puerta (s)
-    s = randi([0 2]);
-    S = randi([0 2]);
+    % Extracts the doors that do not contain prizes
+    a = find(r == R);
+    o(a) = mod(r(a)+1,3);
+    
+    b = find( r == mod(R+1,3) );
+    o(b) = mod(r(b)+1,3);
+    
+    c = find( r == mod(R+2,3) );
+    o(c) = mod(r(c)-1,3);
+    
+    % Changes your chosen door
+    d = find( r == mod(o-1,3) );
+    r(d) = mod(o(d)+1,3);
+    
+    e = find( r == mod(o+1,3) );
+    r(e) = mod(o(e)-1,3);
+    
+    % Evaluates how many times the entries match i.e. the number of hits
+    n = length(find(r == R));
 
-    % Cuentas los aciertos
-    if s == S
-        m = m+1;
-    end
-end
-
-N = n/L;
-M = m/L;
+    
+M = m/I;
+N = n/I;
 disp('Tus posibilidades cambiando de opcion son:'), disp(N)
 disp('Tus posibilidades manteniendo la eleccion son:'), disp(M)
